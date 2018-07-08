@@ -1,0 +1,68 @@
+# MariaDB
+
+## install
+> yum install mariadb mariadb-server
+
+## start server
+> systemctl start mariadb
+
+## 开机启动项
+> systemctl enable mariadb
+
+` 在确认MariaDB数据库软件程序安装完毕并成功之后不要立即使用。为保证数据库的安全性和正常运转，需要先对数据程序进行初始化操作。
+1. 设置root管理员在数据库中的密码值（注意，该密码并非root管理员在系统中的密码，这里的密码值默认应该为空，可直接按回车键）
+2. 设置root管理员在数据库中的专有密码
+3. 随后删除匿名账户，并使用root管理员从远程登录数据库，以确保数据库上运行的业务安全性
+4. 删除默认的测试数据库，取消测试数据库的一系列访问权限
+5. 刷新授权列表，让初始化的设定立即生效
+
+> mysql_secure_installation
+passwd:123456
+
+## 设置防火墙
+- 放行数据库服务程序的访问请求
+> firewall-cmd --permanent --add-service=mysql
+> firewall-cmd --reload
+
+## Operator
+> mysql -u root -p
+> show databases;
+> set password=password('000000');
+> exit
+> mysql -u root -p/000000
+
+## 管理账户及授权
+> create user 'username'@'host' identified by 'passwd';
+> use mysql;
+> select host,user,password from user where user like 'username';
+
+- 对某个特定数据库中特定表授权
+> grant 权限 on db.table to 'username'@'host'
+
+- 对某个特定数据库中的所有表单授权
+> grant 权限 on db.* to 'username'@'host'
+
+...
+` '*' 通配符
+
+- 对所有数据库及所有表单给予全部授权--谨慎
+> grant all privileges on *.* to 'username'@'host'
+
+
+## 数据库的增删改查
+
+## 数据库的备份及修复
+> mysqldump [params] [dbname]
+> mysqldump -u root -p caas > /root/tmp/caasDB.dump
+
+- 删库
+> mysql -u root -p
+> drop database caas;
+> exit
+
+- 恢复
+> mysql -u root -p caas < /root/caasDB.dump
+> mysql -u root -p
+> use caas;
+> show tables;
+> desc kube_master;
